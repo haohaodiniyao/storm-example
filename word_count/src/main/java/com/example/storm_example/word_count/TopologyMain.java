@@ -2,6 +2,7 @@ package com.example.storm_example.word_count;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
+import org.apache.storm.StormSubmitter;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 
@@ -11,7 +12,7 @@ import com.example.storm_example.word_count.bolts.WordNormalizer;
 
 public class TopologyMain {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
 		TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("word-reader", new RandomSentenceSpout());
 		builder.setBolt("word-normalizer", new WordNormalizer()).shuffleGrouping("word-reader");
@@ -25,6 +26,9 @@ public class TopologyMain {
         LocalCluster cluster = new LocalCluster();
         cluster.submitTopology("word-count", conf, builder.createTopology());
         Thread.sleep(10*1000);
+        
+        //集群
+//      StormSubmitter.submitTopology("word-count", conf, builder.createTopology());
         cluster.shutdown();
 	}
 
