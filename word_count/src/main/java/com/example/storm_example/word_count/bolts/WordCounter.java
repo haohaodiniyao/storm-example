@@ -8,10 +8,15 @@ import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.storm_example.randomSentence.spout.RandomSentenceSpout;
 
 import redis.clients.jedis.Jedis;
 
 public class WordCounter implements IRichBolt {
+	private static final Logger LOG = LoggerFactory.getLogger(WordCounter.class);
 	/**
 	 * 
 	 */
@@ -23,10 +28,10 @@ public class WordCounter implements IRichBolt {
 	private Jedis jedis;	
 	@Override
 	public void cleanup() {
-		System.out.println("----------------单词统计----------------");
+		LOG.info("----------------单词统计----------------");
 		for(Map.Entry<String, Integer> entry : counters.entrySet()){
 			jedis.set(entry.getKey(), String.valueOf(entry.getValue()));
-			System.out.println(entry.getKey()+":"+entry.getValue());
+			LOG.info(entry.getKey()+":"+entry.getValue());
 		}
 	}
 

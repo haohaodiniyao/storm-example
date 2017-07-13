@@ -11,8 +11,13 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.storm_example.randomSentence.spout.RandomSentenceSpout;
 
 public class WordNormalizer implements IRichBolt {
+	private static final Logger LOG = LoggerFactory.getLogger(RandomSentenceSpout.class);
 	private OutputCollector collector;
 	@Override
 	public void cleanup() {
@@ -29,6 +34,7 @@ public class WordNormalizer implements IRichBolt {
 				word = word.toLowerCase();
 				List a = new ArrayList();
 				a.add(input);
+				LOG.info("send .................."+word);
 				collector.emit(a,new Values(word));
 			}
 		}
