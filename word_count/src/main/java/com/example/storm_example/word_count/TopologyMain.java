@@ -5,15 +5,15 @@ import org.apache.storm.LocalCluster;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 
+import com.example.storm_example.randomSentence.spout.RandomSentenceSpout;
 import com.example.storm_example.word_count.bolts.WordCounter;
 import com.example.storm_example.word_count.bolts.WordNormalizer;
-import com.example.storm_example.word_count.spouts.WordReader;
 
 public class TopologyMain {
 
 	public static void main(String[] args) throws InterruptedException {
 		TopologyBuilder builder = new TopologyBuilder();
-		builder.setSpout("word-reader", new WordReader());
+		builder.setSpout("word-reader", new RandomSentenceSpout());
 		builder.setBolt("word-normalizer", new WordNormalizer()).shuffleGrouping("word-reader");
 		builder.setBolt("word-counter", new WordCounter(),4).fieldsGrouping("word-normalizer", new Fields("word"));
 		

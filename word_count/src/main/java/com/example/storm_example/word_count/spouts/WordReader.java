@@ -20,7 +20,7 @@ public class WordReader implements IRichSpout {
     private TopologyContext context;
 	@Override
 	public void ack(Object msgId) {
-		System.out.println("OK:"+msgId);
+//		System.out.println("OK:"+msgId);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class WordReader implements IRichSpout {
 
 	@Override
 	public void fail(Object msgId) {
-		System.out.println("FAIL"+msgId);
+//		System.out.println("FAIL"+msgId);
 	}
 
 	@Override

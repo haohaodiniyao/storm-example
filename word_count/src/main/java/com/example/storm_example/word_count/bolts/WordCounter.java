@@ -9,15 +9,23 @@ import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
 
+import redis.clients.jedis.Jedis;
+
 public class WordCounter implements IRichBolt {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4874570810524047268L;
 	private Integer id;
 	private String name;
 	private Map<String,Integer> counters;
 	private OutputCollector collector;
+	private Jedis jedis;	
 	@Override
 	public void cleanup() {
 		System.out.println("----------------单词统计----------------");
 		for(Map.Entry<String, Integer> entry : counters.entrySet()){
+			jedis.set(entry.getKey(), String.valueOf(entry.getValue()));
 			System.out.println(entry.getKey()+":"+entry.getValue());
 		}
 	}
@@ -40,6 +48,7 @@ public class WordCounter implements IRichBolt {
 		this.collector = collector;
 		this.name = context.getThisComponentId();
 		this.id = context.getThisTaskId();
+		jedis = new Jedis("localhost");
 	}
 
 	@Override
