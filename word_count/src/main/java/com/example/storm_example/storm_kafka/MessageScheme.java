@@ -20,7 +20,6 @@ public class MessageScheme implements Scheme {
 	public List<Object> deserialize(ByteBuffer arg0) {
 		try {
 			String line = deserializeString(arg0);
-			LOG.info("line--------------------------------------------"+line);
 			return new Values(line);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,24 +1,24 @@
 package com.example.storm_example.word_count.bolts;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.storm.Config;
-import org.apache.storm.Constants;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WordCounter implements IRichBolt {
-	private static final Logger LOG = LoggerFactory.getLogger(WordCounter.class);
+import com.example.storm_example.randomSentence.spout.RandomSentenceSpout;
+
+import redis.clients.jedis.Jedis;
+
+public class WordFinal implements IRichBolt {
+	private static final Logger LOG = LoggerFactory.getLogger(WordFinal.class);
 	/**
 	 * 
 	 */
@@ -27,6 +27,8 @@ public class WordCounter implements IRichBolt {
 	private String name;
 	private Map<String,Integer> counters;
 	private OutputCollector collector;
+	private Jedis jedis;
+
 	@Override
 	public void cleanup() {
 
@@ -34,19 +36,9 @@ public class WordCounter implements IRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		String word = input.getString(0);
-		if(!counters.containsKey(word)){
-			counters.put(word, 1);
-		}else{
-			Integer c = counters.get(word) + 1;
-			counters.put(word, c);
-		}
-//		if(input.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID) && input.getSourceStreamId().equals(
-//			    Constants.SYSTEM_TICK_STREAM_ID)){
-			List a = new ArrayList();
-			a.add(input);
-			collector.emit(a,new Values(word));	
-//		}
+		String sc = input.getSourceComponent();
+		String count = input.getString(0);
+		LOG.info(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(new Date())+"count->"+sc+"->"+count);
 		collector.ack(input);
 	}
 
@@ -56,18 +48,17 @@ public class WordCounter implements IRichBolt {
 		this.collector = collector;
 		this.name = context.getThisComponentId();
 		this.id = context.getThisTaskId();
+		jedis = new Jedis("localhost");
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer declare) {
-		declare.declare(new Fields("count"));
+	public void declareOutputFields(OutputFieldsDeclarer arg0) {
+
 	}
 
 	@Override
 	public Map<String, Object> getComponentConfiguration() {
-		 Map<String, Object> conf = new HashMap<String, Object>();
-//		    conf.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 10);//每60s持久化一次数据
-		    return conf;
+		return null;
 	}
 
 }

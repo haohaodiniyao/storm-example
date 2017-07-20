@@ -34,7 +34,6 @@ public class WordNormalizer implements IRichBolt {
 				word = word.toLowerCase();
 				List a = new ArrayList();
 				a.add(input);
-				LOG.info("send .................."+word);
 				collector.emit(a,new Values(word));
 			}
 		}
