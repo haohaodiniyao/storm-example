@@ -24,5 +24,6 @@
   </dependencies>
   <modules>
     <module>word_count</module>
+    <module>word_count_2</module>
   </modules>
 </project>
