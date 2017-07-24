@@ -1,15 +1,12 @@
-package com.example.word_count_2;
+package com.example.storm.redis.topology;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
-import org.apache.storm.StormSubmitter;
 import org.apache.storm.redis.bolt.RedisStoreBolt;
 import org.apache.storm.redis.common.config.JedisPoolConfig;
-import org.apache.storm.redis.common.mapper.RedisDataTypeDescription;
 import org.apache.storm.redis.common.mapper.RedisStoreMapper;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
-import org.apache.storm.tuple.ITuple;
 
 public class PersistentWordCount {
     private static final String WORD_SPOUT = "WORD_SPOUT";
@@ -45,7 +42,7 @@ public class PersistentWordCount {
         builder.setBolt(COUNT_BOLT, bolt, 1).fieldsGrouping(WORD_SPOUT, new Fields("word"));
         builder.setBolt(STORE_BOLT, storeBolt, 1).shuffleGrouping(COUNT_BOLT);
 
-        String topoName = "test";
+        String topoName = "test_set_redis";
         if (args.length == 3) {
             topoName = args[2];
         } else if (args.length > 3) {
@@ -53,37 +50,11 @@ public class PersistentWordCount {
             return;
         }
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("word-count", config, builder.createTopology());
-        Thread.sleep(1000*1000);
+        cluster.submitTopology(topoName, config, builder.createTopology());
 //        StormSubmitter.submitTopology(topoName, config, builder.createTopology());
     }
 
     private static RedisStoreMapper setupStoreMapper() {
         return new WordCountStoreMapper();
-    }
-
-    private static class WordCountStoreMapper implements RedisStoreMapper {
-        private RedisDataTypeDescription description;
-        private final String hashKey = "wordCount";
-
-        public WordCountStoreMapper() {
-            description = new RedisDataTypeDescription(
-                    RedisDataTypeDescription.RedisDataType.STRING, hashKey);
-        }
-
-        @Override
-        public RedisDataTypeDescription getDataTypeDescription() {
-            return description;
-        }
-
-        @Override
-        public String getKeyFromTuple(ITuple tuple) {
-            return tuple.getStringByField("word");
-        }
-
-        @Override
-        public String getValueFromTuple(ITuple tuple) {
-            return tuple.getStringByField("count");
-        }
     }
 }
