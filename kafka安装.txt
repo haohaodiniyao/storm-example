@@ -1,0 +1,24 @@
+##配置参数文档 http://kafka.apache.org/documentation/#configuration
+#解压
+tar -zxvf kafka_2.9.2-0.8.2.2.tgz
+#配置server.properties
+#启动
+/usr/local/src/kafka_2.9.2-0.8.2.2/bin/kafka-server-start.sh -daemon /usr/local/src/kafka_2.9.2-0.8.2.2/config/server.properties
+##测试验证
+##创建topic
+##centos1创建test-topic
+/usr/local/src/kafka_2.9.2-0.8.2.2/bin/kafka-topics.sh --create --zookeeper centos1:2181 --replication-factor 2 --partitions 1 --topic test-topic
+##查看有哪些topic
+/usr/local/src/kafka_2.9.2-0.8.2.2/bin/kafka-topics.sh --list --zookeeper centos1:2181
+##生产者
+/usr/local/src/kafka_2.9.2-0.8.2.2/bin/kafka-console-producer.sh --broker-list centos1:19092,centos2:19092,centos3:19092 --topic test-topic
+##消费者
+/usr/local/src/kafka_2.9.2-0.8.2.2/bin/kafka-console-consumer.sh --zookeeper 192.168.229.128:2181,192.168.229.129:2181,192.168.229.130:2181 --topic test-topic
+
+
+##kafka集群监控页面
+https://github.com/quantifind/KafkaOffsetMonitor/releases
+
+java -cp KafkaOffsetMonitor-assembly-0.2.0.jar com.quantifind.kafka.offsetapp.OffsetGetterWeb --zk 192.168.229.128,192.168.229.129,192.168.229.130 --refresh 5.minutes --retain 1.day &
+
+http://192.168.229.128:41720/#/

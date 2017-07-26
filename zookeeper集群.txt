@@ -1,0 +1,72 @@
+#下载zookeeper-3.4.6.tar.gz
+#配置hosts测试节点连通性
+#centos7设置hostname 
+###hostnamectl set-hostname centos1
+###hostnamectl set-hostname centos1
+###hostnamectl set-hostname centos1
+###IP主机名映射
+###vi /etc/hosts  
+192.168.229.128 centos1
+
+
+192.168.229.129 centos2
+192.168.229.130 centos3
+###关闭防火墙
+http://www.cnblogs.com/zhenmingliu/archive/2012/04/16/2452629.html
+vi /etc/sysconfig/iptables
+-A INPUT -m state –state NEW -m tcp -p tcp –dport 3306 -j ACCEPT（允许3306端口通过防火墙）
+###解压zookeeper
+###tar -zxvf zookeeper-3.4.6.tar.gz
+###复制 cp conf/zoo_sample.cfg conf/zoo.cfg
+###删除文件夹 rm -rf xxx
+dataDir=/usr/local/src/zookeeper/zkdata
+dataLogDir=/usr/local/src/zookeeper/logs
+###clientPort=2181
+server.1=centos1:2888:3888
+server.2=centos2:2888:3888
+server.3=centos3:2888:3888
+###创建目录 mkdir /usr/local/src/zookeeper/zkdata
+###创建目录 mkdir /usr/local/src/zookeeper/logs
+创建myid文件
+echo "1" > /usr/local/src/zookeeper/zkdata/myid
+###配置zk环境变量
+###生效source /etc/profile
+###同步rsync -avzR /usr/local/src/zookeeper-3.4.6/ 192.168.229.130:/
+#####启动zk
+[root@centos1 bin]# zkServer.sh start
+rc.local中设置开机启动zk
+JMX enabled by default
+Using config: /usr/local/src/zookeeper-3.4.6/bin/../conf/zoo.cfg
+Starting zookeeper ... STARTED
+###验证zk是否启动成功
+[root@centos1 bin]# zkServer.sh status
+JMX enabled by default
+Using config: /usr/local/src/zookeeper-3.4.6/bin/../conf/zoo.cfg
+Mode: follower
+
+###安装python
+tar -zxvf Python-2.7.2.tgz
+./configure
+make && make install
+验证
+python --version
+
+安装storm
+###启动
+centos1  storm ui >/dev/null 2>&1 &
+centos1  storm nimbus >/dev/null 2>&1 &
+centos3  storm supervisor >/dev/null 2>&1 &
+centos2  storm supervisor >/dev/null 2>&1 &
+http://192.168.229.128:8080/index.html
+
+
+
+mvn clean assembly:single
+storm jar /usr/local/src/word_count-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.example.storm_example.word_count.TopologyMain
+
+/usr/local/src/zookeeper-3.4.6/bin/zkServer.sh start
+
+/usr/local/src/apache-storm-0.9.7/bin/storm ui >/dev/null 2>&1 &
+/usr/local/src/apache-storm-0.9.7/bin/storm nimbus >/dev/null 2>&1 &
+/usr/local/src/apache-storm-0.9.7/bin/storm supervisor >/dev/null 2>&1 &
+/usr/local/src/apache-storm-0.9.7/bin/storm supervisor >/dev/null 2>&1 &
