@@ -19,6 +19,6 @@ tar -zxvf kafka_2.9.2-0.8.2.2.tgz
 ##kafka集群监控页面
 https://github.com/quantifind/KafkaOffsetMonitor/releases
 
-java -cp KafkaOffsetMonitor-assembly-0.2.0.jar com.quantifind.kafka.offsetapp.OffsetGetterWeb --zk 192.168.229.128,192.168.229.129,192.168.229.130 --refresh 5.minutes --retain 1.day &
+java -cp KafkaOffsetMonitor-assembly-0.2.1.jar com.quantifind.kafka.offsetapp.OffsetGetterWeb --zk 192.168.229.131,192.168.229.129,192.168.229.130 --refresh 5.minutes --retain 1.day &
 
 http://192.168.229.128:41720/#/
