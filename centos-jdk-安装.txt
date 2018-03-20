@@ -1,3 +1,4 @@
+******安装jdk******
 #下载jdk-7u79-linux-x64.tar.gz
 #解压tar -zxvf jdk-7u79-linux-x64.tar.gz
 #配置环境变量
